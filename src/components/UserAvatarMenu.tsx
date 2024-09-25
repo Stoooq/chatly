@@ -1,13 +1,12 @@
+"use client"
+
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { ExtendedUser } from "../../next-auth";
 
-interface UserAvatarProps {
-    user: unknown
-}
-
-const UserAvatar = ({ user }: UserAvatarProps) => {
+const UserAvatarMenu = ({ user }: { user: ExtendedUser }) => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -33,4 +32,4 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
 	);
 };
 
-export default UserAvatar;
+export default UserAvatarMenu;

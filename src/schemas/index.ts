@@ -21,3 +21,29 @@ export const RegisterSchema = z.object({
 		message: "Minimum 6 characters required",
 	}),
 });
+
+export const ResetSchema = z.object({
+    email: z.string().email({
+        message: "Email is required"
+    }),
+})
+
+export const NewPasswordSchema = z.object({
+    password: z.string().min(6, {
+        message: "Minimum 6 characters required"
+    }),
+})
+
+export const SettingsSchema = z.object({
+    name: z.optional(z.string()),
+    email: z.optional(z.string().email()),
+    password: z.optional(z.string().min(6)),
+    newPassword: z.optional(z.string().min(6)),
+    isTwoFactorEnabled: z.optional(z.boolean()),
+}).refine((data) => {
+    if (data.password && !data.newPassword) return false
+
+    if (!data.password && data.newPassword) return false
+
+    return true
+})

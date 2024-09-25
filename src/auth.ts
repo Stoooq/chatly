@@ -9,17 +9,46 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	pages: {
 		signIn: "/sign-in",
 	},
+	events: {
+		async linkAccount({ user }) {
+			await db.user.update({
+				where: { id: user.id },
+				data: { emailVerified: new Date() },
+			});
+		},
+	},
 	callbacks: {
+		// async signIn({ user, account }) {
+		// 	if (account?.provider !== "credentials") return true;
+
+		// 	const existingUser = await getUserById(user.id!);
+
+		// 	if (!existingUser?.emailVerified) return false;
+
+		// 	// if (existingUser.isTwoFactorEnabled) {
+		// 	// 	const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+		// 	// 		existingUser.id
+		// 	// 	);
+
+		// 	// 	if (!twoFactorConfirmation) return false;
+
+		// 	// 	await db.twoFactorConfirmation.delete({
+		// 	// 		where: { id: twoFactorConfirmation.id },
+		// 	// 	});
+		// 	// }
+
+		// 	return true;
+		// },
 		async session({ token, session }) {
 			if (!token.sub || !session.user) return session;
 
 			session.user.id = token.sub;
 			session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
 			session.user.name = token.name;
-			session.user.email = token.email!;
+			session.user.email = token.email as string;
 			session.user.isOAuth = token.isOAuth as boolean;
 
-			console.log("TOKEN ", token, "SESSION ", session);
+			// console.log("TOKEN ", token, "SESSION ", session);
 
 			return session;
 		},

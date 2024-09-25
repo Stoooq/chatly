@@ -3,8 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/components/QueryProvider";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
 	src: "./fonts/GeistVF.woff",
@@ -27,14 +26,11 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const session = await auth();
-
 	return (
-		<SessionProvider session={session}>
 			<html lang="en">
 				<body
 					className={cn(
-						"relative h-full font-sans antialiased",
+						"relative h-full font-sans antialiased bg-secondary",
 						geistSans.variable,
 						geistMono.variable
 					)}
@@ -43,9 +39,9 @@ export default async function RootLayout({
 						<main className="relative flex flex-col min-screen">
 							<div className="flex-grow flex-1">{children}</div>
 						</main>
+						<Toaster />
 					</QueryProvider>
 				</body>
 			</html>
-		</SessionProvider>
 	);
 }

@@ -1,14 +1,12 @@
-"use client"
-
 import React from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
 import { MessageSquareText } from "lucide-react";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
-import UserAvatar from "./UserAvatar";
+import UserAvatarMenu from "./UserAvatarMenu";
+import { auth } from "@/auth";
 
-const NavBar = () => {
-	const { data: user } = useCurrentUser();
+const NavBar = async () => {
+	const session = await auth()
 
 	return (
 		<div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
@@ -23,8 +21,8 @@ const NavBar = () => {
 							</div>
 							<div className="ml-auto flex items-center">
 								<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-									{user ? (
-										<UserAvatar user={user} />
+									{session?.user ? (
+										<UserAvatarMenu user={session.user} />
 									) : (
 										<>
 											<div>Sign in</div>
