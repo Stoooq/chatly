@@ -22,6 +22,11 @@ model User {
   password              String?
   accounts              Account[]
   isTwoFactorEnabled    Boolean                @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?
+
+  sentFriendRequests    FriendRequest[] @relation("sentRequests")
+  receivedFriendRequests FriendRequest[] @relation("receivedRequests")
+  friends               Friend[] @relation("userFriends")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -41,7 +46,7 @@ model Account {
   id_token                 String? @db.Text
   session_state            String?
   refresh_token_expires_in Int?
-  user                     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,4 +71,48 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
+
+model FriendRequest {
+  id      String   @id @default(cuid())
+  senderId        String
+  receiverId      String
+  status          RequestStatus   @default(PENDING)
+  createdAt       DateTime        @default(now())
+
+  sender          User            @relation("sentRequests", fields: [senderId], references: [id])
+  receiver        User            @relation("receivedRequests", fields: [receiverId], references: [id])
+}
+
+model Friend {
+  id      String   @id @default(cuid())
+  userId          String
+  friendId        String
+  createdAt       DateTime        @default(now())
+
+  friend                  User     @relation("userFriends", fields: [friendId], references: [id])
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
