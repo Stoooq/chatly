@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import {
 	Dialog,
 	DialogContent,
@@ -10,28 +8,18 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "../ui/dialog";
-import { useQuery } from "@tanstack/react-query";
+} from "@/components/ui/dialog";
 import { friendRequest } from "@/actions/friend-request";
-import { ExtendedUser } from "../../../next-auth";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@prisma/client";
+import { Input } from "@/components/ui/input";
+import { ExtendedUser } from "../../../../next-auth";
+import { Button } from "@/components/ui/button";
 
 const SearchFriends = ({ user, users }: { user: ExtendedUser, users: User[] }) => {
 	const [searchName, setSearchName] = useState("");
 
 	const { toast } = useToast();
-
-	// const {
-	// 	data: users,
-	// 	isLoading,
-	// 	error,
-	// } = useQuery({
-	// 	queryKey: ["allUsers"],
-	// 	queryFn: async () => {
-	// 		return await getAllUsers();
-	// 	},
-	// });
 
 	const filteredUsers = useMemo(() => {
 		if (!searchName.trim() || !users) return users;

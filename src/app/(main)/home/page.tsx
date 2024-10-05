@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import FriendRequests from "@/components/main/FriendRequests";
-import SearchFriends from "@/components/main/SearchFriends";
+import FriendRequests from "@/components/main/home/FriendRequests";
+import FriendsMenu from "@/components/main/home/FriendsMenu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import db from "@/lib/db";
 
@@ -8,23 +8,21 @@ const HomePage = async () => {
 	const session = await auth();
 	const user = session?.user;
 
-	const users = await db.user.findMany();
-
-	if (!user || !users) return <p>Loading</p>;
+	if (!user) return "";
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-			<Card className="col-span-1 h-[200px]">
+			<Card className="col-span-1 row-span-2">
 				<CardHeader>
-					<CardTitle>Friends</CardTitle>
+					<CardTitle className="mx-auto">Friends</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<SearchFriends user={user} users={users} />
+					<FriendsMenu user={user} />
 				</CardContent>
 			</Card>
 			<Card className="col-span-2">
 				<CardHeader>
-					<CardTitle>Friend requests</CardTitle>
+					<CardTitle className="mx-auto">Friend requests</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<FriendRequests user={user} />

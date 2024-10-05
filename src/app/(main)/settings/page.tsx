@@ -1,4 +1,4 @@
-import UserSettings from "@/components/main/UserSettings";
+import UserSettings from "@/components/main/settings/UserSettings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const SettingsPage = () => {

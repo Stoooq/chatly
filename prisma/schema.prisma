@@ -24,9 +24,12 @@ model User {
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
-  sentFriendRequests    FriendRequest[] @relation("sentRequests")
+  sentFriendRequests     FriendRequest[] @relation("sentRequests")
   receivedFriendRequests FriendRequest[] @relation("receivedRequests")
-  friends               Friend[] @relation("userFriends")
+  friends                Friend[]
+
+  privateConversations PrivateConversation[]
+  privateMessages      PrivateMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -92,27 +95,41 @@ model TwoFactorConfirmation {
 }
 
 model FriendRequest {
-  id      String   @id @default(cuid())
-  senderId        String
-  receiverId      String
-  status          RequestStatus   @default(PENDING)
-  createdAt       DateTime        @default(now())
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  createdAt  DateTime @default(now())
 
-  sender          User            @relation("sentRequests", fields: [senderId], references: [id])
-  receiver        User            @relation("receivedRequests", fields: [receiverId], references: [id])
+  sender   User @relation("sentRequests", fields: [senderId], references: [id])
+  receiver User @relation("receivedRequests", fields: [receiverId], references: [id])
 }
 
 model Friend {
-  id      String   @id @default(cuid())
-  userId          String
-  friendId        String
-  createdAt       DateTime        @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  friendId  String
+  createdAt DateTime @default(now())
 
-  friend                  User     @relation("userFriends", fields: [friendId], references: [id])
+  friend User @relation(fields: [friendId], references: [id])
 }
 
-enum RequestStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
+model PrivateConversation {
+  id String @id @default(cuid())
+
+  users User[]
+  privateMessages PrivateMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PrivateMessage {
+  id             String   @id @default(cuid())
+  senderId       String
+  conversationId String
+  content        String
+  createdAt      DateTime @default(now())
+
+  sender       User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversation PrivateConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
